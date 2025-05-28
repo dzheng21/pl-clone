@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Link Emulator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Windows 11 Start Menu -->
+    <div id="start-menu" class="start-menu hidden">
+      <div class="start-menu-header">
+        <input
+          type="text"
+          placeholder="Type here to search"
+          class="search-bar"
+        />
+        <button
+          id="collapse-phone-panel"
+          class="collapse-btn"
+          title="Toggle Phone Link panel"
+        >
+          <i class="fas fa-mobile-alt"></i>
+        </button>
+      </div>
+
+      <div class="start-menu-content">
+        <div class="start-menu-left">
+          <div class="pinned-apps">
+            <h3>Pinned</h3>
+            <div class="apps-grid">
+              <div class="app-tile">
+                <i class="fab fa-microsoft"></i>
+                <span>Word</span>
+              </div>
+              <div class="app-tile">
+                <i class="fab fa-microsoft"></i>
+                <span>Excel</span>
+              </div>
+              <div class="app-tile">
+                <i class="fas fa-globe"></i>
+                <span>Edge</span>
+              </div>
+              <div class="app-tile">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Phone Link</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="phone-link-panel" class="phone-link-panel">
+          <div class="phone-status-header" id="phone-status-start">
+            <div class="phone-info">
+              <i class="fas fa-mobile-alt"></i>
+              <div class="phone-details">
+                <span class="phone-name" id="phone-name-start">Galaxy S23</span>
+                <span class="phone-status" id="phone-status-text-start"
+                  >Connected • 75%</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="recent-photos">
+            <h4>Recent photos</h4>
+            <div class="photos-scroll" id="recent-photos-start">
+              <!-- Recent photos will be populated here -->
+            </div>
+          </div>
+
+          <div class="recent-messages">
+            <h4>Recent messages</h4>
+            <div class="messages-list" id="recent-messages-start">
+              <!-- Recent messages will be populated here -->
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="send-files-btn" id="send-files-start">
+              <i class="fas fa-file-upload"></i>
+              Send files
+            </button>
+
+            <div class="action-buttons">
+              <button
+                class="action-btn"
+                id="open-phone-link-start"
+                title="Open Phone Link"
+              >
+                <i class="fas fa-external-link-alt"></i>
+              </button>
+              <button
+                class="action-btn"
+                id="phone-link-settings-start"
+                title="Settings"
+              >
+                <i class="fas fa-cog"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Phone Link Application Window -->
+    <div id="phone-link-app" class="phone-link-app hidden">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <i class="fas fa-mobile-alt"></i>
+          <span>Phone Link</span>
+        </div>
+        <div class="title-bar-controls">
+          <button class="title-btn minimize-btn">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button class="title-btn maximize-btn">
+            <i class="far fa-square"></i>
+          </button>
+          <button class="title-btn close-btn" id="close-app">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="app-content">
+        <div class="sidebar">
+          <div class="phone-info-sidebar">
+            <div class="phone-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <div class="phone-details">
+              <span class="phone-name" id="phone-name-main">Galaxy S23</span>
+              <span class="phone-status" id="phone-status-main"
+                >Connected • 75%</span
+              >
+            </div>
+          </div>
+
+          <nav class="nav-menu">
+            <button class="nav-item active" data-view="dashboard">
+              <i class="fas fa-home"></i>
+              <span>Dashboard</span>
+            </button>
+            <button class="nav-item" data-view="notifications">
+              <i class="fas fa-bell"></i>
+              <span>Notifications</span>
+            </button>
+            <button class="nav-item" data-view="messages">
+              <i class="fas fa-comment"></i>
+              <span>Messages</span>
+            </button>
+            <button class="nav-item" data-view="photos">
+              <i class="fas fa-images"></i>
+              <span>Photos</span>
+            </button>
+            <button class="nav-item" data-view="apps">
+              <i class="fas fa-th"></i>
+              <span>Apps</span>
+            </button>
+            <button class="nav-item" data-view="calls">
+              <i class="fas fa-phone"></i>
+              <span>Calls</span>
+            </button>
+          </nav>
+
+          <button class="settings-btn" data-view="settings">
+            <i class="fas fa-cog"></i>
+          </button>
+        </div>
+
+        <div class="main-content">
+          <!-- Dashboard View -->
+          <div id="dashboard-view" class="view active">
+            <div class="view-header">
+              <h1>Phone Link</h1>
+            </div>
+            <div class="dashboard-content">
+              <div class="connection-status">
+                <div class="status-card">
+                  <div class="status-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                  </div>
+                  <div class="status-info">
+                    <h3 id="phone-name-dashboard">Galaxy S23</h3>
+                    <p id="connection-status">Connected • Battery: 75%</p>
+                    <p class="last-sync">Last synced: Just now</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-links">
+                <div class="quick-link-card" data-view="messages">
+                  <i class="fas fa-comment"></i>
+                  <h3>Messages</h3>
+                  <p>Send and receive text messages</p>
+                </div>
+                <div class="quick-link-card" data-view="photos">
+                  <i class="fas fa-images"></i>
+                  <h3>Photos</h3>
+                  <p>View and download your photos</p>
+                </div>
+                <div class="quick-link-card" data-view="apps">
+                  <i class="fas fa-th"></i>
+                  <h3>Apps</h3>
+                  <p>Use your phone's apps on PC</p>
+                </div>
+                <div class="quick-link-card" data-view="calls">
+                  <i class="fas fa-phone"></i>
+                  <h3>Calls</h3>
+                  <p>Make and receive calls</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications View -->
+          <div id="notifications-view" class="view">
+            <div class="view-header">
+              <h1>Notifications</h1>
+              <div class="header-actions">
+                <button class="clear-all-btn">Clear all</button>
+              </div>
+            </div>
+            <div class="notifications-content">
+              <div class="audio-controls" id="audio-controls">
+                <div class="media-info">
+                  <img
+                    src="https://via.placeholder.com/40x40"
+                    alt="Album art"
+                    class="album-art"
+                  />
+                  <div class="track-info">
+                    <span class="track-title">Song Title</span>
+                    <span class="track-artist">Artist Name</span>
+                  </div>
+                </div>
+                <div class="media-controls">
+                  <button class="media-btn">
+                    <i class="fas fa-backward"></i>
+                  </button>
+                  <button class="media-btn play-pause">
+                    <i class="fas fa-play"></i>
+                  </button>
+                  <button class="media-btn">
+                    <i class="fas fa-forward"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="notifications-list" id="notifications-list">
+                <!-- Notifications will be populated here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages View -->
+          <div id="messages-view" class="view">
+            <div class="messages-layout">
+              <div class="conversations-list">
+                <div class="conversations-header">
+                  <h2>Messages</h2>
+                  <button class="new-message-btn">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                <div class="conversations" id="conversations-list">
+                  <!-- Conversations will be populated here -->
+                </div>
+              </div>
+
+              <div class="conversation-view">
+                <div class="conversation-header" id="conversation-header">
+                  <div class="contact-info">
+                    <div class="contact-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <span class="contact-name">Select a conversation</span>
+                  </div>
+                </div>
+
+                <div class="messages-container" id="messages-container">
+                  <div class="no-conversation">
+                    <i class="fas fa-comment"></i>
+                    <p>Select a conversation to start messaging</p>
+                  </div>
+                </div>
+
+                <div
+                  class="message-input-container"
+                  id="message-input-container"
+                >
+                  <div class="message-input">
+                    <button class="attachment-btn">
+                      <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="Type a message..."
+                      id="message-input"
+                    />
+                    <button class="emoji-btn">
+                      <i class="fas fa-smile"></i>
+                    </button>
+                    <button class="send-btn">
+                      <i class="fas fa-paper-plane"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photos View -->
+          <div id="photos-view" class="view">
+            <div class="view-header">
+              <h1>Photos</h1>
+              <div class="header-actions">
+                <button class="send-photos-btn">Send photos</button>
+              </div>
+            </div>
+            <div class="photos-content">
+              <div class="drop-zone" id="drop-zone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag photos here to send to your phone</p>
+              </div>
+
+              <div class="photos-grid" id="photos-grid">
+                <!-- Photos will be populated here -->
+              </div>
+
+              <div class="empty-state" id="photos-empty-state">
+                <i class="fas fa-images"></i>
+                <h3>No photos to display yet</h3>
+                <p>
+                  Make sure Phone Link has permission to access your photos.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apps View -->
+          <div id="apps-view" class="view">
+            <div class="view-header">
+              <h1>Apps</h1>
+              <div class="header-actions">
+                <button class="open-phone-screen-btn">Open phone screen</button>
+              </div>
+            </div>
+            <div class="apps-content">
+              <div class="apps-grid" id="apps-grid">
+                <!-- Apps will be populated here -->
+              </div>
+
+              <div class="empty-state" id="apps-empty-state">
+                <i class="fas fa-th"></i>
+                <h3>No apps to display</h3>
+                <p>
+                  Ensure 'Link to Windows' permissions are granted on your
+                  phone.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calls View -->
+          <div id="calls-view" class="view">
+            <div class="view-header">
+              <h1>Calls</h1>
+            </div>
+            <div class="calls-content">
+              <div class="calls-layout">
+                <div class="dial-pad-container">
+                  <div class="dial-display">
+                    <input
+                      type="text"
+                      id="dial-input"
+                      placeholder="Enter number"
+                      readonly
+                    />
+                    <button class="call-btn" id="make-call-btn">
+                      <i class="fas fa-phone"></i>
+                    </button>
+                  </div>
+
+                  <div class="dial-pad">
+                    <button class="dial-btn" data-digit="1">1</button>
+                    <button class="dial-btn" data-digit="2">
+                      2<small>ABC</small>
+                    </button>
+                    <button class="dial-btn" data-digit="3">
+                      3<small>DEF</small>
+                    </button>
+                    <button class="dial-btn" data-digit="4">
+                      4<small>GHI</small>
+                    </button>
+                    <button class="dial-btn" data-digit="5">
+                      5<small>JKL</small>
+                    </button>
+                    <button class="dial-btn" data-digit="6">
+                      6<small>MNO</small>
+                    </button>
+                    <button class="dial-btn" data-digit="7">
+                      7<small>PQRS</small>
+                    </button>
+                    <button class="dial-btn" data-digit="8">
+                      8<small>TUV</small>
+                    </button>
+                    <button class="dial-btn" data-digit="9">
+                      9<small>WXYZ</small>
+                    </button>
+                    <button class="dial-btn" data-digit="*">*</button>
+                    <button class="dial-btn" data-digit="0">
+                      0<small>+</small>
+                    </button>
+                    <button class="dial-btn" data-digit="#">#</button>
+                  </div>
+                </div>
+
+                <div class="call-history-container">
+                  <div class="contact-search">
+                    <input
+                      type="text"
+                      placeholder="Search contacts..."
+                      id="contact-search"
+                    />
+                  </div>
+
+                  <div class="call-history">
+                    <h3>Recent calls</h3>
+                    <div class="call-history-list" id="call-history-list">
+                      <!-- Call history will be populated here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings View -->
+          <div id="settings-view" class="view">
+            <div class="view-header">
+              <h1>Settings</h1>
+            </div>
+            <div class="settings-content">
+              <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="general">
+                  General
+                </button>
+                <button class="settings-tab" data-tab="features">
+                  Features
+                </button>
+                <button class="settings-tab" data-tab="personalization">
+                  Personalization
+                </button>
+                <button class="settings-tab" data-tab="about">About</button>
+              </div>
+
+              <div class="settings-panels">
+                <div id="general-settings" class="settings-panel active">
+                  <div class="setting-group">
+                    <h3>File downloads</h3>
+                    <div class="setting-item">
+                      <label>Save files to:</label>
+                      <div class="file-path-selector">
+                        <input type="text" value="/Users/Downloads" readonly />
+                        <button class="browse-btn">Browse</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="features-settings" class="settings-panel">
+                  <div class="setting-group">
+                    <h3>Phone features</h3>
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Notifications</label>
+                        <span class="permission-status granted"
+                          >Permissions granted</span
+                        >
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Messages</label>
+                        <span class="permission-status granted"
+                          >Permissions granted</span
+                        >
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Photos</label>
+                        <span class="permission-status granted"
+                          >Permissions granted</span
+                        >
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Apps</label>
+                        <span class="permission-status granted"
+                          >Permissions granted</span
+                        >
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Calls</label>
+                        <span class="permission-status needed"
+                          >Bluetooth required</span
+                        >
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Cross-device copy and paste</label>
+                        <span class="permission-status granted">Available</span>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <label>Instant Hotspot</label>
+                        <span class="permission-status granted">Available</span>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="personalization-settings" class="settings-panel">
+                  <div class="setting-group">
+                    <h3>Appearance</h3>
+                    <div class="setting-item">
+                      <label>Theme</label>
+                      <select id="theme-selector">
+                        <option value="system">Use system setting</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="about-settings" class="settings-panel">
+                  <div class="setting-group">
+                    <h3>About Phone Link</h3>
+                    <div class="about-info">
+                      <p><strong>Version:</strong> 1.0.0 (Emulator)</p>
+                      <p><strong>Build:</strong> 2025.528.1000.0</p>
+                      <p><strong>© 2025 Microsoft Corporation</strong></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals and Overlays -->
+    <div id="photo-viewer" class="modal hidden">
+      <div class="modal-content photo-viewer-content">
+        <div class="photo-viewer-header">
+          <button class="close-btn" id="close-photo-viewer">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="photo-viewer-body">
+          <img id="photo-viewer-image" src="" alt="Photo" />
+        </div>
+        <div class="photo-viewer-footer">
+          <button class="photo-action-btn" id="download-photo">
+            <i class="fas fa-download"></i>
+            Download
+          </button>
+          <button class="photo-action-btn" id="open-on-phone">
+            <i class="fas fa-mobile-alt"></i>
+            Open on phone
+          </button>
+          <button class="photo-action-btn" id="share-photo">
+            <i class="fas fa-share"></i>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- App Mirror Window -->
+    <div id="app-mirror" class="app-mirror hidden">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <i class="fas fa-mobile-alt"></i>
+          <span id="mirrored-app-name">Phone Screen</span>
+        </div>
+        <div class="title-bar-controls">
+          <button class="title-btn minimize-btn">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button class="title-btn maximize-btn">
+            <i class="far fa-square"></i>
+          </button>
+          <button class="title-btn close-btn" id="close-mirror">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="mirror-content">
+        <div class="phone-screen" id="phone-screen">
+          <div class="phone-ui">
+            <div class="status-bar">
+              <span class="time">12:34</span>
+              <div class="status-icons">
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+              </div>
+            </div>
+            <div class="app-content" id="mirrored-app-content">
+              <!-- Mirrored app content will be displayed here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Input for File Transfers -->
+    <input
+      type="file"
+      id="file-input"
+      multiple
+      accept="image/*"
+      style="display: none"
+    />
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <div class="taskbar-left">
+        <button class="start-btn" id="start-btn">
+          <i class="fab fa-windows"></i>
+        </button>
+        <button class="taskbar-app" id="phone-link-taskbar">
+          <i class="fas fa-mobile-alt"></i>
+        </button>
+      </div>
+
+      <div class="taskbar-right">
+        <div class="system-tray">
+          <span class="time" id="taskbar-time">12:34 PM</span>
+          <span class="date" id="taskbar-date">5/28/2025</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
