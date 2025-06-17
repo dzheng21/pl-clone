@@ -15,13 +15,12 @@ class PhoneLinkEmulator {
       calls: false,
       clipboard: true,
       hotspot: true,
-    };
-
-    this.loadMockData();
+    };    this.loadMockData();
     this.init();
     this.setupEventListeners();
     this.updateTime();
     this.loadSettings();
+    this.startPeriodicNotifications();
   }
 
   init() {
@@ -45,6 +44,9 @@ class PhoneLinkEmulator {
 
     // Setup cross-device clipboard simulation
     this.setupClipboard();
+
+    // Start periodic notifications
+    this.startPeriodicNotifications();
   }
 
   loadMockData() {
@@ -349,10 +351,9 @@ class PhoneLinkEmulator {
       if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) {
         startMenu.classList.add("hidden");
       }
-    });
-
-    // Keyboard shortcuts
+    });    // Keyboard shortcuts
     document.addEventListener("keydown", (e) => {
+      // Global shortcuts (Ctrl/Cmd key combinations)
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
@@ -365,6 +366,45 @@ class PhoneLinkEmulator {
               this.pasteFromClipboard();
             }
             break;
+          case "1":
+            e.preventDefault();
+            this.showView("dashboard");
+            break;
+          case "2":
+            e.preventDefault();
+            this.showView("notifications");
+            break;
+          case "3":
+            e.preventDefault();
+            this.showView("messages");
+            break;
+          case "4":
+            e.preventDefault();
+            this.showView("photos");
+            break;
+          case "5":
+            e.preventDefault();
+            this.showView("apps");
+            break;
+          case "6":
+            e.preventDefault();
+            this.showView("calls");
+            break;
+        }
+      }
+      
+      // Escape key shortcuts
+      if (e.key === "Escape") {
+        const photoViewer = document.getElementById("photo-viewer");
+        const appMirror = document.getElementById("app-mirror");
+        const startMenu = document.getElementById("start-menu");
+        
+        if (!photoViewer.classList.contains("hidden")) {
+          this.closePhotoViewer();
+        } else if (!appMirror.classList.contains("hidden")) {
+          this.closeMirrorWindow();
+        } else if (!startMenu.classList.contains("hidden")) {
+          startMenu.classList.add("hidden");
         }
       }
     });
@@ -379,15 +419,20 @@ class PhoneLinkEmulator {
         );
         this.selectConversation(conversationId);
       }
-    });
-
-    // Send message
+    });    // Send message
     const sendMessage = () => {
       const input = document.getElementById("message-input");
       const text = input.value.trim();
       if (text && this.selectedConversation) {
         this.sendMessage(text);
         input.value = "";
+        
+        // Simulate typing indicator and auto-response
+        this.showTypingIndicator();
+        setTimeout(() => {
+          this.hideTypingIndicator();
+          this.simulateIncomingMessage();
+        }, 1000 + Math.random() * 2000);
       }
     };
 
@@ -622,17 +667,17 @@ class PhoneLinkEmulator {
         }
       });
   }
-
   setupDragAndDrop() {
     const dropZone = document.getElementById("drop-zone");
-    const photosContent = document.querySelector(
-      "#photos-view .photos-content"
-    );
+    const photosContent = document.querySelector("#photos-view .photos-content");
 
+    // Prevent default drag behaviors
     ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
       photosContent.addEventListener(eventName, this.preventDefaults, false);
+      document.body.addEventListener(eventName, this.preventDefaults, false);
     });
 
+    // Highlight drop zone when item enters
     ["dragenter", "dragover"].forEach((eventName) => {
       photosContent.addEventListener(
         eventName,
@@ -645,6 +690,7 @@ class PhoneLinkEmulator {
       );
     });
 
+    // Unhighlight drop zone when item leaves
     ["dragleave", "drop"].forEach((eventName) => {
       photosContent.addEventListener(
         eventName,
@@ -655,6 +701,7 @@ class PhoneLinkEmulator {
       );
     });
 
+    // Handle dropped files
     photosContent.addEventListener(
       "drop",
       (e) => {
@@ -665,6 +712,23 @@ class PhoneLinkEmulator {
       },
       false
     );
+
+    // Also enable file input for click to upload
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      this.handleDroppedFiles(e.target.files);
+    });
+    
+    document.body.appendChild(fileInput);
   }
 
   setupClipboard() {
@@ -684,6 +748,71 @@ class PhoneLinkEmulator {
         }, 100);
       }
     });
+  }
+
+  startPeriodicNotifications() {
+    // Send a random notification every 30-120 seconds
+    const scheduleNext = () => {
+      const delay = 30000 + Math.random() * 90000; // 30-120 seconds
+      setTimeout(() => {
+        this.sendRandomNotification();
+        scheduleNext();
+      }, delay);
+    };
+    
+    // Start after initial 10 seconds
+    setTimeout(scheduleNext, 10000);
+  }
+
+  sendRandomNotification() {
+    const randomNotifications = [
+      {
+        app: "WhatsApp",
+        icon: "fab fa-whatsapp", 
+        title: "Message from Alex",
+        content: "Are you free this weekend? 🤔"
+      },
+      {
+        app: "Instagram", 
+        icon: "fab fa-instagram",
+        title: "New follower",
+        content: "jessica_smith started following you"
+      },
+      {
+        app: "Gmail",
+        icon: "fas fa-envelope",
+        title: "Meeting Update",
+        content: "Tomorrow's meeting moved to 3 PM"
+      },
+      {
+        app: "Spotify",
+        icon: "fab fa-spotify", 
+        title: "Weekly Discovery",
+        content: "Your Discover Weekly is ready! 🎵"
+      },
+      {
+        app: "News",
+        icon: "fas fa-newspaper",
+        title: "Breaking News",
+        content: "Local weather alert for your area"
+      },
+      {
+        app: "Calendar",
+        icon: "fas fa-calendar",
+        title: "Upcoming Event", 
+        content: "Dentist appointment in 2 hours"
+      },
+      {
+        app: "Twitter",
+        icon: "fab fa-twitter",
+        title: "Trending Now",
+        content: "Check out what's trending in Tech"
+      }
+    ];
+
+    const notification = randomNotifications[Math.floor(Math.random() * randomNotifications.length)];
+    notification.time = "now";
+    this.showNotification(notification);
   }
 
   // UI State Management
@@ -992,7 +1121,6 @@ class PhoneLinkEmulator {
 
     container.scrollTop = container.scrollHeight;
   }
-
   sendMessage(text) {
     const newMessage = {
       id: Date.now(),
@@ -1017,11 +1145,32 @@ class PhoneLinkEmulator {
     document
       .querySelector(`[data-conversation-id="${this.selectedConversation.id}"]`)
       .classList.add("active");
+  }
 
-    // Simulate response (optional)
-    setTimeout(() => {
-      this.simulateIncomingMessage();
-    }, 2000 + Math.random() * 3000);
+  showTypingIndicator() {
+    if (!this.selectedConversation) return;
+    
+    const messagesContainer = document.getElementById("messages-container");
+    const typingIndicator = document.createElement("div");
+    typingIndicator.classList.add("message", "received", "typing-indicator");
+    typingIndicator.innerHTML = `
+      <div class="message-content">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    `;
+    messagesContainer.appendChild(typingIndicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  hideTypingIndicator() {
+    const typingIndicator = document.querySelector(".typing-indicator");
+    if (typingIndicator) {
+      typingIndicator.remove();
+    }
   }
 
   simulateIncomingMessage() {
@@ -1036,6 +1185,10 @@ class PhoneLinkEmulator {
       "Absolutely!",
       "No problem at all",
       "Will do!",
+      "That's interesting 🤔",
+      "Let me think about that",
+      "Great idea!",
+      "I'm on it!",
     ];
 
     const response = responses[Math.floor(Math.random() * responses.length)];
@@ -1063,11 +1216,14 @@ class PhoneLinkEmulator {
       .querySelector(`[data-conversation-id="${this.selectedConversation.id}"]`)
       .classList.add("active");
 
-    // Show notification
-    this.showIncomingMessageNotification(
-      this.selectedConversation.name,
-      response
-    );
+    // Show a notification for the new message
+    this.showNotification({
+      app: "Messages",
+      icon: "fas fa-comment",
+      title: `New message from ${this.selectedConversation.name}`,
+      content: response,
+      time: "now"
+    });
   }
 
   handleFileAttachment(file) {
@@ -1115,32 +1271,55 @@ class PhoneLinkEmulator {
       this.showToast("Photo URL copied to clipboard");
     }
   }
-
   handleDroppedFiles(files) {
-    Array.from(files).forEach((file) => {
-      if (file.type.startsWith("image/")) {
-        // Simulate sending to phone
-        this.showToast(`Sending ${file.name} to phone...`);
+    const validFiles = Array.from(files).filter(file => 
+      file.type.startsWith("image/") || file.type.startsWith("video/")
+    );
+    
+    if (validFiles.length === 0) {
+      this.showToast("Please drop image or video files only", "fas fa-exclamation-triangle");
+      return;
+    }
 
-        setTimeout(() => {
-          // Add to photos
+    // Show upload progress
+    this.showToast(`Uploading ${validFiles.length} file(s) to phone...`, "fas fa-upload");
+
+    validFiles.forEach((file, index) => {
+      setTimeout(() => {
+        if (file.type.startsWith("image/")) {
           const reader = new FileReader();
           reader.onload = (e) => {
             const newPhoto = {
-              id: Date.now(),
+              id: Date.now() + index,
               url: e.target.result,
               thumbnail: e.target.result,
               date: new Date().toLocaleDateString(),
+              name: file.name,
+              size: this.formatFileSize(file.size)
             };
             this.photos.unshift(newPhoto);
             this.populatePhotos();
             this.populateRecentPhotos();
-            this.showToast("Photo sent successfully");
+            this.showToast(`📷 ${file.name} uploaded successfully`);
+            
+            // Hide empty state if it was visible
+            this.checkPhotosEmpty();
           };
           reader.readAsDataURL(file);
-        }, 1000);
-      }
+        } else if (file.type.startsWith("video/")) {
+          // Handle video files
+          this.showToast(`🎥 Video ${file.name} sent to phone`);
+        }
+      }, index * 500); // Stagger uploads
     });
+  }
+
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   triggerFileSelector() {
@@ -1216,21 +1395,22 @@ class PhoneLinkEmulator {
     const input = document.getElementById("dial-input");
     input.value += digit;
   }
-
   makeCall(number) {
     if (!this.permissions.calls) {
       this.showToast(
-        "Bluetooth is required for calls. Please enable Bluetooth."
+        "Bluetooth is required for calls. Please enable Bluetooth.",
+        "fas fa-bluetooth"
       );
       return;
     }
 
-    this.showToast(`Calling ${number}...`);
+    // Show calling UI
+    this.showCallingUI(number);
 
     // Add to call history
     const newCall = {
       id: Date.now(),
-      contact: "Unknown",
+      contact: this.getContactName(number),
       number: number,
       type: "outgoing",
       duration: "0:00",
@@ -1247,15 +1427,42 @@ class PhoneLinkEmulator {
     // Clear dial input
     document.getElementById("dial-input").value = "";
 
-    // Simulate call duration
+    // Simulate call progression
     setTimeout(() => {
-      this.showToast("Call ended");
-      // Update duration
-      newCall.duration = `${Math.floor(Math.random() * 10)}:${String(
+      this.hideCallingUI();
+      const duration = `${Math.floor(Math.random() * 10)}:${String(
         Math.floor(Math.random() * 60)
       ).padStart(2, "0")}`;
+      newCall.duration = duration;
       this.populateCallHistory();
+      this.showToast(`Call ended - Duration: ${duration}`, "fas fa-phone-slash");
     }, 3000 + Math.random() * 7000);
+  }
+
+  getContactName(number) {
+    const contacts = {
+      "+1 (555) 123-4567": "John Doe",
+      "+1 (555) 987-6543": "Sarah Wilson",
+      "+1 (555) 555-5555": "Mom",
+      "+1 (555) 111-2222": "Unknown"
+    };
+    return contacts[number] || "Unknown";
+  }
+
+  showCallingUI(number) {
+    const contactName = this.getContactName(number);
+    this.showToast(`📞 Calling ${contactName}...`, "fas fa-phone", 8000);
+  }
+
+  hideCallingUI() {
+    // Remove any existing calling toasts
+    const toasts = document.querySelectorAll('.toast-notification');
+    toasts.forEach(toast => {
+      if (toast.textContent.includes('Calling')) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }
+    });
   }
 
   filterCallHistory(query) {
@@ -1297,21 +1504,6 @@ class PhoneLinkEmulator {
         this.showToast(`Launching ${notification.app} on phone`);
       }
     }
-  }
-
-  showIncomingMessageNotification(sender, message) {
-    // Add to notifications
-    const newNotification = {
-      id: Date.now(),
-      app: "Messages",
-      icon: "fas fa-comment",
-      title: `New message from ${sender}`,
-      content: message,
-      time: "Now",
-    };
-
-    this.notifications.unshift(newNotification);
-    this.populateNotifications();
   }
 
   // Media Controls
@@ -1429,71 +1621,61 @@ class PhoneLinkEmulator {
     setTimeout(() => this.updateTime(), 60000); // Update every minute
   }
 
-  showToast(message) {
-    // Create toast notification
-    const toast = document.createElement("div");
-    toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--background-primary);
-            color: var(--text-primary);
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--border-color);
-            z-index: 10000;
-            font-size: 14px;
-            max-width: 300px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-      toast.style.transform = "translateX(0)";
-    }, 10);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      toast.style.transform = "translateX(100%)";
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 3000);
+  showNotification(notification) {
+    // Add to notifications array
+    notification.id = Date.now();
+    this.notifications.unshift(notification);
+    
+    // Update UI
+    this.populateNotifications();
+    
+    // Show toast notification
+    this.showToast(`${notification.app}: ${notification.content}`, notification.icon);
+    
+    // Update notification badge
+    this.updateNotificationBadge();
   }
 
-  copyToClipboard(text = null) {
-    const textToCopy = text || window.getSelection().toString();
-    if (textToCopy && this.permissions.clipboard) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        this.clipboardData = textToCopy;
-        this.showToast("Copied to cross-device clipboard");
-      });
-    }
-  }
-
-  pasteFromClipboard() {
-    if (this.clipboardData && this.permissions.clipboard) {
-      // Simulate pasting cross-device content
-      const activeElement = document.activeElement;
-      if (
-        activeElement &&
-        (activeElement.tagName === "INPUT" ||
-          activeElement.tagName === "TEXTAREA")
-      ) {
-        activeElement.value += this.clipboardData;
-        this.showToast("Pasted from phone clipboard");
+  updateNotificationBadge() {
+    const badge = document.querySelector('.notification-badge');
+    const count = this.notifications.length;
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
       }
     }
   }
+  showToast(message, icon = 'fas fa-info-circle', duration = 3000) {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+      existingToast.remove();
+    }
 
-  preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    // Create toast
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `
+      <i class="${icon}"></i>
+      <span>${message}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Show toast
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // Hide toast after specified duration
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
   }
+
+  // ...existing code...
 }
 
 // Initialize the emulator when DOM is loaded

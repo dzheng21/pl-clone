@@ -149,14 +149,15 @@
             <button class="nav-item active" data-view="dashboard">
               <i class="fas fa-home"></i>
               <span>Dashboard</span>
-            </button>
-            <button class="nav-item" data-view="notifications">
+            </button>            <button class="nav-item" data-view="notifications">
               <i class="fas fa-bell"></i>
               <span>Notifications</span>
+              <span class="notification-badge"></span>
             </button>
             <button class="nav-item" data-view="messages">
               <i class="fas fa-comment"></i>
               <span>Messages</span>
+              <span class="notification-badge"></span>
             </button>
             <button class="nav-item" data-view="photos">
               <i class="fas fa-images"></i>
@@ -327,10 +328,13 @@
                 <button class="send-photos-btn">Send photos</button>
               </div>
             </div>
-            <div class="photos-content">
-              <div class="drop-zone" id="drop-zone">
+            <div class="photos-content">              <div class="drop-zone" id="drop-zone">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p>Drag photos here to send to your phone</p>
+                <p><strong>Drag photos here</strong> to send to your phone</p>
+                <p class="drop-zone-subtitle">or click to browse files</p>
+                <div class="drop-zone-supported">
+                  Supports: JPG, PNG, GIF, WEBP
+                </div>
               </div>
 
               <div class="photos-grid" id="photos-grid">
